@@ -48,7 +48,7 @@ builder.Services.AddAuthentication(
             {
 
                 OptionsJWT jwtOption = new OptionsJWT { };
-                builder.Configuration.Bind("jwt",jwtOption);
+                builder.Configuration.Bind("jwt", jwtOption);
                 var tokenValidation = new TokenValidationParameters
                 {
                     ValidateIssuer = true,
@@ -101,15 +101,15 @@ using (var scope = app.Services.CreateScope())
     IdentityContext dataContext = service.GetRequiredService<IdentityContext>();
     dataContext.Database.Migrate();
 
-    SeedData seedData= new SeedData { } ;
+    SeedData seedData = new SeedData { };
     builder.Configuration.Bind("SeedData", seedData);
 
-    var roleManager= service.GetRequiredService<RoleManager<IdentityRole<Guid>>>();
+    var roleManager = service.GetRequiredService<RoleManager<IdentityRole<Guid>>>();
 
-    var userManager= service.GetRequiredService<UserManager<IdentityUser<Guid>>>();
+    var userManager = service.GetRequiredService<UserManager<IdentityUser<Guid>>>();
     seedData.User.ForEach((user) =>
     {
-        if (!userManager.Users.AnyAsync(p=> p.UserName == user.UserName).GetAwaiter().GetResult())
+        if (!userManager.Users.AnyAsync(p => p.UserName == user.UserName).GetAwaiter().GetResult())
         {
             var result = userManager.CreateAsync(new IdentityUser<Guid>
             {
@@ -139,8 +139,8 @@ using (var scope = app.Services.CreateScope())
     seedData.UserRole.ForEach((userRole) =>
     {
         var user = userManager.FindByNameAsync(userRole.User).GetAwaiter().GetResult();
-        if(!userManager.IsInRoleAsync(user,userRole.Role).GetAwaiter().GetResult())
-            userManager.AddToRoleAsync(user,userRole.Role).GetAwaiter().GetResult();
+        if (!userManager.IsInRoleAsync(user, userRole.Role).GetAwaiter().GetResult())
+            userManager.AddToRoleAsync(user, userRole.Role).GetAwaiter().GetResult();
     });
 
 }
@@ -155,7 +155,7 @@ app.UseSwagger(options =>
         if (httpReq.HttpContext.Request.Headers.ContainsKey("Referer"))
         {
             var refererUrl = new Uri(httpReq.HttpContext.Request.Headers["Referer"]);
-            swagger.Servers.Add(new OpenApiServer { Url = $"{refererUrl.Scheme}://{refererUrl.Host}:{refererUrl.Port}/api/identity" });
+            swagger.Servers.Add(new OpenApiServer { Url = $"{refererUrl.Scheme}://{refererUrl.Host}:{refererUrl.Port}/identity" });
         }
         var serverUrl = $"{httpReq.Scheme}://{httpReq.Host}";
         swagger.Servers.Add(new OpenApiServer { Url = serverUrl });
@@ -167,7 +167,9 @@ app.UseSwaggerUI();
 
 app.UseCors((c) =>
 {
-    c.AllowAnyOrigin();
+    c.AllowCredentials();
+    c.WithOrigins("*", "http://localhost:4200");
+    c.SetIsOriginAllowedToAllowWildcardSubdomains();
     c.AllowAnyMethod();
     c.AllowAnyHeader();
 });
@@ -177,6 +179,12 @@ app.UseAuthorization();
 
 app.UseEndpoints(endpoint =>
 {
+    endpoint.MapGet("/", (context) =>
+    {
+        context.Response.Redirect("/swagger", true);
+        return Task.CompletedTask;
+    });
+
     endpoint.MapControllers();
 });
 

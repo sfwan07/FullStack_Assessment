@@ -2,7 +2,7 @@
 {
     public class SendUserModel
     {
-        public Guid userId { get; set; }
-        public string message { get; set; }
+        public Guid UserId { get; set; }
+        public string Message { get; set; }
     }
 }

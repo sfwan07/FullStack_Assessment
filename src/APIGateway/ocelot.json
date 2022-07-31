@@ -4,8 +4,8 @@
       "ServiceName": "realTime",
       "UseServiceDiscovery": true,
       "DownstreamScheme": "ws",
-      "DownstreamPathTemplate": "/hub",
-      "UpstreamPathTemplate": "/api/hub",
+      "DownstreamPathTemplate": "/{url}",
+      "UpstreamPathTemplate": "/realtime/{url}",
       "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE", "OPTIONS" ],
       "DangerousAcceptAnyServerCertificateValidator": true,
       "RouteIsCaseSensitive": false
@@ -14,7 +14,7 @@
       "ServiceName": "identity",
       "UseServiceDiscovery": true,
       "DownstreamPathTemplate": "/{url}",
-      "UpstreamPathTemplate": "/api/identity/{url}",
+      "UpstreamPathTemplate": "/identity/{url}",
       "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE", "OPTIONS" ],
       "DangerousAcceptAnyServerCertificateValidator": true,
       "RouteIsCaseSensitive": false
@@ -23,7 +23,7 @@
       "ServiceName": "staff",
       "UseServiceDiscovery": true,
       "DownstreamPathTemplate": "/{url}",
-      "UpstreamPathTemplate": "/api/staff/{url}",
+      "UpstreamPathTemplate": "/staff/{url}",
       "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE", "OPTIONS" ],
       "DangerousAcceptAnyServerCertificateValidator": true,
       "RouteIsCaseSensitive": false

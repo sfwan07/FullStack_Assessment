@@ -70,20 +70,33 @@ services:
       - consul
 
   gateway:
-      restart: on-failure
-      build:
-          context: .
-          dockerfile: ./src/APIGateway/Dockerfile
-      container_name: gateway.app
-      ports:
-          - "85:80"
-      links:
-          - consul
-          - identity
-          - staff
-          - real_time
-      depends_on:
-          - consul
-          - identity
-          - staff
-          - real_time
+    restart: on-failure
+    build:
+        context: .
+        dockerfile: ./src/APIGateway/Dockerfile
+    container_name: gateway.app
+    ports:
+        - "85:80"
+    links:
+        - consul
+        - identity
+        - staff
+        - real_time
+    depends_on:
+        - consul
+        - identity
+        - staff
+        - real_time  
+
+  ui:
+    restart: on-failure
+    build:
+        context: .
+        dockerfile: ./src/ui/Dockerfile
+    container_name: ui.app
+    ports:
+        - "86:80"
+    links:
+        - gateway
+    depends_on:
+        - gateway

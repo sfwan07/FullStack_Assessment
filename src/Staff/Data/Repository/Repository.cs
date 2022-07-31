@@ -26,9 +26,9 @@ namespace Staff.Data
                 await Task.FromException(new Exception("002"));
         }
 
-        public IAsyncEnumerable<T> All()
+        public Task<List<T>> All(CancellationToken cancellationToken = default)
         {
-            return _dbSet.AsAsyncEnumerable();
+            return _dbSet.ToListAsync(cancellationToken);
         }
 
         public Task<int> Count(CancellationToken cancellationToken = default)
@@ -64,9 +64,9 @@ namespace Staff.Data
                 await Task.FromException(new Exception("003"));
         }
 
-        public IAsyncEnumerable<T> Where(Expression<Func<T,bool>> predicate, CancellationToken cancellationToken = default)
+        public Task<List<T>> Where(Expression<Func<T,bool>> predicate, CancellationToken cancellationToken = default)
         {
-            return _dbSet.Where(predicate).AsAsyncEnumerable();
+            return _dbSet.Where(predicate).ToListAsync(cancellationToken);
         }
     }
 }

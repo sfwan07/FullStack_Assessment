@@ -12,7 +12,7 @@ namespace SingalR.API
         private readonly DataContext _dataContext;
         private readonly HttpContext _httpContext;
 
-        public AppHub(DataContext dataContext, HttpContextAccessor httpContextAccessor)
+        public AppHub(DataContext dataContext, IHttpContextAccessor httpContextAccessor)
         {
             _dataContext = dataContext;
             _httpContext = httpContextAccessor.HttpContext;
@@ -21,8 +21,8 @@ namespace SingalR.API
         public async Task SendToUser(SendUserModel model)
         {
             IReadOnlyList<string> connsetions =await _dataContext.ConnectedUsers
-                .Where(x => x.UserId == model.userId).Select(s => s.ConnectionId).ToListAsync();
-            await Clients.Clients(connsetions).SendAsync("SendToUser", model.message);
+                .Where(x => x.UserId == model.UserId).Select(s => s.ConnectionId).ToListAsync();
+            await Clients.Clients(connsetions).SendAsync("ReceiveMessage", model.Message);
         }
 
         public override async Task OnDisconnectedAsync(Exception? exception)
@@ -33,6 +33,7 @@ namespace SingalR.API
                 if (connection is not null)
                 {
                     _dataContext.ConnectedUsers.Remove(connection);
+                    await _dataContext.SaveChangesAsync();
                 }
 
             }
@@ -47,7 +48,7 @@ namespace SingalR.API
         {
             try
             {
-                Guid userId = Guid.Parse(_httpContext.User.FindFirst("SID").Value);
+                Guid userId = new Guid(_httpContext.User.FindFirst("SID").Value);
                 if (Guid.Empty != userId)
                 {
                     _dataContext.ConnectedUsers.Add(new Model.ConnectedUser

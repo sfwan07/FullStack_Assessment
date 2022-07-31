@@ -1,5 +1,6 @@
 ﻿using Identity.Model;
 using Identity.Repository;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -37,6 +38,7 @@ namespace Identity.Controller
         }
 
         [HttpGet]
+        [Authorize]
         public IAsyncEnumerable<UserViewModel> GetAllUsers()
         {
             return  _repository.GetUsers();

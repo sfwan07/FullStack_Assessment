@@ -22,8 +22,8 @@ builder.Services.AddConsulToApp(consulService.DiscoveryAddress);
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddSignalR();
 
-builder.Services.AddRouting();
 builder.Services.AddCors();
+builder.Services.AddRouting();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -92,6 +92,15 @@ using (var scope = app.Services.CreateScope())
     dataContext.Database.Migrate();
 }
 
+app.UseCors((c) =>
+{
+    c.AllowCredentials();
+    c.WithOrigins("*","http://localhost:4200");
+    c.SetIsOriginAllowedToAllowWildcardSubdomains();
+    c.AllowAnyMethod();
+    c.AllowAnyHeader();
+});
+
 //if (app.Environment.IsDevelopment())
 //{
 app.UseSwagger();
@@ -99,12 +108,6 @@ app.UseSwaggerUI();
 //}
 
 app.UseRouting();
-app.UseCors((c) =>
-{
-    c.AllowAnyOrigin();
-    c.AllowAnyMethod();
-    c.AllowAnyHeader();
-});
 app.UseAuthentication();
 app.UseAuthorization();
 

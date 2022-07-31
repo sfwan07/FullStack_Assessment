@@ -59,7 +59,7 @@ builder.Services.AddSwaggerGen(c =>
 
 });
 
-builder.Services.AddDBSqlServer(builder.Configuration.GetConnectionString("db"),typeof(Program).Assembly.FullName);
+builder.Services.AddDBSqlServer(builder.Configuration.GetConnectionString("db"), typeof(Program).Assembly.FullName);
 builder.Services.AddAutoMapper(typeof(Program));
 
 builder.Services.AddAuthentication(
@@ -134,28 +134,37 @@ app.UseSwagger(options =>
         if (httpReq.HttpContext.Request.Headers.ContainsKey("Referer"))
         {
             var refererUrl = new Uri(httpReq.HttpContext.Request.Headers["Referer"]);
-            swagger.Servers.Add(new OpenApiServer { Url = $"{refererUrl.Scheme}://{refererUrl.Host}:{refererUrl.Port}/api/staff" });
+            swagger.Servers.Add(new OpenApiServer { Url = $"{refererUrl.Scheme}://{refererUrl.Host}:{refererUrl.Port}/staff" });
         }
         var serverUrl = $"{httpReq.Scheme}://{httpReq.Host}";
         swagger.Servers.Add(new OpenApiServer { Url = serverUrl });
     }
                 );
 });
-    app.UseSwaggerUI();
+app.UseSwaggerUI();
 //}
 
 app.UseRouting();
 app.UseCors((c) =>
 {
-    c.AllowAnyOrigin();
+    c.AllowCredentials();
+    c.WithOrigins("*", "http://localhost:4200");
+    c.SetIsOriginAllowedToAllowWildcardSubdomains();
     c.AllowAnyMethod();
     c.AllowAnyHeader();
 });
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.UseEndpoints(endpoints => { 
-    endpoints.MapControllers().RequireAuthorization();
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapGet("/", (context) =>
+    {
+        context.Response.Redirect("/swagger", true);
+        return Task.CompletedTask;
+    });
+
+    endpoints.MapControllers();
 });
 
 app.UseConsul(app.Lifetime);

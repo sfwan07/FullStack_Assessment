@@ -12,10 +12,10 @@ namespace Staff.Core
         where T : BaseEntity<TKey>
     {
         Task<int> Count(CancellationToken cancellationToken = default);
-        IAsyncEnumerable<T> All();
+        Task<List<T>> All(CancellationToken cancellationToken = default);
         Task<T> FindById(TKey id, CancellationToken cancellationToken = default);
         Task<T> Singal(Expression<Func<T, bool>> predicate, CancellationToken cancellationToken = default);
-        IAsyncEnumerable<T> Where(Expression<Func<T,bool>> predicate,CancellationToken cancellationToken = default);
+        Task<List<T>> Where(Expression<Func<T,bool>> predicate,CancellationToken cancellationToken = default);
         Task Add(T item, CancellationToken cancellationToken = default);
         Task Update(T item, CancellationToken cancellationToken = default);
         Task Delete(TKey id, CancellationToken cancellationToken = default);

@@ -1,0 +1,53 @@
+{
+  "Routes": [
+    {
+      "ServiceName": "realTime",
+      "UseServiceDiscovery": true,
+      "DownstreamScheme": "ws",
+      "DownstreamPathTemplate": "/hub",
+      "UpstreamPathTemplate": "/api/hub",
+      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE", "OPTIONS" ],
+      "DangerousAcceptAnyServerCertificateValidator": true,
+      "RouteIsCaseSensitive": false
+    },
+    {
+      "ServiceName": "identity",
+      "UseServiceDiscovery": true,
+      "DownstreamPathTemplate": "/{url}",
+      "UpstreamPathTemplate": "/api/identity/{url}",
+      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE", "OPTIONS" ],
+      "DangerousAcceptAnyServerCertificateValidator": true,
+      "RouteIsCaseSensitive": false
+    },
+    {
+      "ServiceName": "staff",
+      "UseServiceDiscovery": true,
+      "DownstreamPathTemplate": "/{url}",
+      "UpstreamPathTemplate": "/api/staff/{url}",
+      "UpstreamHttpMethod": [ "GET", "POST", "PUT", "DELETE", "OPTIONS" ],
+      "DangerousAcceptAnyServerCertificateValidator": true,
+      "RouteIsCaseSensitive": false
+    }
+  ],
+  "AuthenticationOptions": {
+    "AuthenticationProviderKey": "Bearer",
+    "AllowedScopes": []
+  },
+  "HttpHandlerOptions": {
+    "AllowAutoRedirect": true,
+    "UseCookieContainer": true,
+    "UseTracing": true
+  },
+  "GlobalConfiguration": {
+    "ServiceDiscoveryProvider": {
+      "Schema": "http",
+      "Host": "192.168.20.10",
+      "Port": 8500,
+      "Type": "Consul"
+    },
+    "SkipSslValidation": true
+  },
+  "UpstreamHeaderTransform": {
+    "X-Forwarded-For": "{RemoteIpAddress}"
+  }
+}

@@ -1,0 +1,89 @@
+version: "3.9"
+services:
+
+  mssql:
+    restart: on-failure
+    image: mcr.microsoft.com/mssql/server:2019-CU16-GDR1-ubuntu-20.04
+    container_name: mssql
+    ports:
+      - "1433:1433"
+    environment:
+      MSSQL_SA_PASSWORD: "P@ssw0rd"
+      ACCEPT_EULA: "Y"
+      MSSQL_PID: "Standard"
+    volumes:
+    - '/home/pro/docker/mssql/data:/var/opt/mssql/data' 
+    - '/home/pro/docker/mssql/log:/var/opt/mssql/log' 
+    - '/home/pro/docker/mssql/secrets:/var/opt/mssql/secrets'
+
+  consul:
+    restart: on-failure
+    image: consul
+    container_name: consul
+    ports:
+        - "8500:8500"
+        - "8600:8600"
+
+  identity:
+    restart: on-failure
+    build:
+      context: .
+      dockerfile: ./src/Identity/Dockerfile
+    container_name: identity.app
+    ports:
+      - "91:80"
+    links:
+      - mssql
+      - consul
+    depends_on:
+      - mssql
+      - consul
+
+  real_time:
+    restart: on-failure
+    build:
+      context: .
+      dockerfile: ./src/SingalR/Dockerfile
+    container_name: realtime.app
+    ports:
+      - "92:80"
+    links:
+      - mssql
+      - consul
+    depends_on:
+      - mssql
+      - consul
+
+  staff:
+    restart: on-failure
+    build:
+      context: .
+      dockerfile: ./src/Staff/Dockerfile
+    container_name: staff.app
+    ports:
+      - "93:80"
+    links:
+      - mssql
+      - consul
+    depends_on:
+      - mssql
+      - consul
+
+  gateway:
+      restart: on-failure
+      build:
+          context: .
+          dockerfile: ./src/APIGateway/Dockerfile
+      container_name: gateway.app
+      ports:
+          - "85:80"
+      links:
+          - consul
+          - identity
+          - staff
+          - real_time
+      depends_on:
+          - consul
+          - identity
+          - staff
+          - real_time

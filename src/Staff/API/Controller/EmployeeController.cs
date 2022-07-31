@@ -20,9 +20,9 @@ namespace Staff.Controller
 
         // GET: api/<EmployeeController>
         [HttpGet]
-        public IAsyncEnumerable<Employee> Get()
+        public async Task<List<EmployeeViewModel>> Get()
         {
-            return _repository.All();
+            return _mapper.Map<List<EmployeeViewModel>>(await _repository.All());
         }
 
         // GET api/<EmployeeController>/5

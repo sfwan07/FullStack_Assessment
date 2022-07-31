@@ -6,7 +6,7 @@ namespace Staff
 {
     public class StaffProfile : Profile
     {
-        public StaffProfile(IServiceProvider provider)
+        public StaffProfile()
         {
             CreateMap<Employee, EmployeeViewModel>()
                 .ForMember(d => d.FullName, opt => opt.MapFrom(s => s.FullName()));

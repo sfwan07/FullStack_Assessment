@@ -58,9 +58,9 @@ builder.Services.AddSwaggerGen(c =>
                 });
 
 });
+
 builder.Services.AddDBSqlServer(builder.Configuration.GetConnectionString("db"),typeof(Program).Assembly.FullName);
 builder.Services.AddAutoMapper(typeof(Program));
-
 
 builder.Services.AddAuthentication(
                 options =>
